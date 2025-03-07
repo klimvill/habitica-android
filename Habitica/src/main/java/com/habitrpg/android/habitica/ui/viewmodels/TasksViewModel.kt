@@ -69,12 +69,12 @@ constructor(
                     teamPlans = plans.associateBy { it.id }
                     owners =
                         listOf(Pair(userViewModel.userID, userViewModel.displayName)) +
-                            plans.map {
-                                Pair(
-                                    it.id,
-                                    it.summary
-                                )
-                            }
+                                plans.map {
+                                    Pair(
+                                        it.id,
+                                        it.summary
+                                    )
+                                }
                     if (owners.size > 1 && canSwitchOwners.value != false) {
                         canSwitchOwners.value = owners.size > 1
                     }
@@ -92,7 +92,7 @@ constructor(
                 if (activeFilters[TaskType.TODO] == Task.FILTER_COMPLETED) {
                     taskRepository.retrieveCompletedTodos()
                 }
-                contentRepository.retrieveWorldState()
+                // contentRepository.retrieveWorldState()
             } else {
                 userRepository.retrieveTeamPlan(ownerID.value ?: "")
             }

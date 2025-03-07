@@ -1,10 +1,8 @@
 package com.habitrpg.android.habitica.ui.viewmodels
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.util.Log
 import androidx.core.content.edit
 import androidx.credentials.CredentialManager
@@ -21,7 +19,6 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.habitrpg.android.habitica.BuildConfig
 import com.habitrpg.android.habitica.data.ApiClient
 import com.habitrpg.android.habitica.data.UserRepository
 import com.habitrpg.android.habitica.extensions.AuthenticationErrors
@@ -34,7 +31,6 @@ import com.habitrpg.android.habitica.modules.AuthenticationHandler
 import com.habitrpg.common.habitica.api.HostConfig
 import com.habitrpg.common.habitica.helpers.ExceptionHandler
 import com.habitrpg.common.habitica.helpers.KeyHelper
-import com.habitrpg.common.habitica.helpers.launchCatching
 import com.habitrpg.common.habitica.models.auth.UserAuthResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +40,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import com.habitrpg.android.habitica.BuildConfig
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
@@ -80,7 +77,7 @@ class AuthenticationViewModel @Inject constructor(
             }
             if (password.length < configManager.minimumPasswordLength()) {
                 return AuthenticationErrors.PASSWORD_TOO_SHORT.apply {
-                     minPasswordLength = configManager.minimumPasswordLength()
+                    minPasswordLength = configManager.minimumPasswordLength()
                 }
             }
             if (password != confirmPassword) {
@@ -175,24 +172,24 @@ class AuthenticationViewModel @Inject constructor(
     }
 
     fun startGoogleAuth(context: Context) {
-        val googleIdOption = GetSignInWithGoogleOption.Builder(BuildConfig.GOOGLE_AUTH_CLIENT_ID)
-            .build()
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
+//        val googleIdOption = GetSignInWithGoogleOption.Builder(BuildConfig.GOOGLE_AUTH_CLIENT_ID)
+//            .build()
+//        val request = GetCredentialRequest.Builder()
+//            .addCredentialOption(googleIdOption)
+//            .build()
 
-        viewModelScope.launch {
-            try {
-                val result = CredentialManager.create(context).getCredential(
-                    request = request,
-                    context = context,
-                )
-                handleSignIn(context, result)
-            } catch (e: GetCredentialException) {
-                authenticationError(AuthenticationErrors.GET_CREDENTIALS_ERROR)
-                Log.e("AuthenticationViewModel", "Get Credential Exception", e)
-            }
-        }
+//        viewModelScope.launch {
+//            try {
+//                val result = CredentialManager.create(context).getCredential(
+//                    request = request,
+//                    context = context,
+//                )
+//                handleSignIn(context, result)
+//            } catch (e: GetCredentialException) {
+//                authenticationError(AuthenticationErrors.GET_CREDENTIALS_ERROR)
+//                Log.e("AuthenticationViewModel", "Get Credential Exception", e)
+//            }
+//        }
     }
 
     private suspend fun handleSignIn(context: Context, result: GetCredentialResponse) {
@@ -204,21 +201,21 @@ class AuthenticationViewModel @Inject constructor(
                     try {
                         val googleIdTokenCredential = GoogleIdTokenCredential
                             .createFrom(credential.data)
-                        val authorizationRequest = AuthorizationRequest.Builder()
-                            .requestOfflineAccess(BuildConfig.GOOGLE_AUTH_CLIENT_ID)
-                            .setRequestedScopes(
-                                listOf(
-                                    Scope(Scopes.PROFILE),
-                                    Scope(Scopes.EMAIL),
-                                )
-                            )
-                            .build()
-                        val result = Identity.getAuthorizationClient(context)
-                            .authorize(authorizationRequest).await()
-                        if (result != null && result.accessToken != null) {
-                            val response = result.accessToken?.let { apiClient.connectSocial("google", googleIdTokenCredential.id, it) }
-                            handleAuthResponse(response)
-                        }
+//                        val authorizationRequest = AuthorizationRequest.Builder()
+//                            .requestOfflineAccess(BuildConfig.GOOGLE_AUTH_CLIENT_ID)
+//                            .setRequestedScopes(
+//                                listOf(
+//                                    Scope(Scopes.PROFILE),
+//                                    Scope(Scopes.EMAIL),
+//                                )
+//                            )
+//                            .build()
+//                        val result = Identity.getAuthorizationClient(context)
+//                            .authorize(authorizationRequest).await()
+//                        if (result != null && result.accessToken != null) {
+//                            val response = result.accessToken?.let { apiClient.connectSocial("google", googleIdTokenCredential.id, it) }
+//                            handleAuthResponse(response)
+//                        }
                     } catch (e: GoogleIdTokenParsingException) {
                         authenticationError(AuthenticationErrors.INVALID_CREDENTIALS)
                         Log.e("AuthenticationViewModel", "Received an invalid google id token response", e)
@@ -228,6 +225,7 @@ class AuthenticationViewModel @Inject constructor(
                     Log.e("AuthenticationViewModel", "Unexpected type of credential")
                 }
             }
+
             else -> {
                 authenticationError(AuthenticationErrors.INVALID_CREDENTIALS)
                 Log.e("AuthenticationViewModel", "Unexpected type of credential")

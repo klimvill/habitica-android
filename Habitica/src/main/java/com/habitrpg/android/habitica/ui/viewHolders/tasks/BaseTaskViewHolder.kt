@@ -2,6 +2,7 @@ package com.habitrpg.android.habitica.ui.viewHolders.tasks
 
 import android.content.Context
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -55,7 +56,10 @@ abstract class BaseTaskViewHolder(
     private val taskIconWrapper: LinearLayout? = itemView.findViewById(R.id.taskIconWrapper)
     private val approvalRequiredTextView: TextView =
         itemView.findViewById(R.id.approvalRequiredTextField)
+
+    // todo: С этим говном ошибка
     private val expandNotesButton: Button? = itemView.findViewById(R.id.expand_notes_button)
+
     private val syncingView: ProgressBar? = itemView.findViewById(R.id.syncing_view)
     private val errorIconView: ImageButton? = itemView.findViewById(R.id.error_icon)
     protected val taskGray: Int =
@@ -121,6 +125,8 @@ abstract class BaseTaskViewHolder(
                         if (ellipses && notesTextView.maxLines != 3) {
                             notesTextView.maxLines = 3
                         }
+                        //expandNotesButton?.visibility =
+                        //    if (notesTextView.lineCount > 3) View.VISIBLE else View.GONE
                         expandNotesButton?.visibility =
                             if (ellipses || notesExpanded) View.VISIBLE else View.GONE
                     }
@@ -158,6 +164,7 @@ abstract class BaseTaskViewHolder(
         task = data
         itemView.setBackgroundColor(context.getThemeColor(R.attr.colorContentBackground))
 
+        // todo: Посмотреть
         expandNotesButton?.visibility = View.GONE
         notesExpanded = false
         notesTextView?.maxLines = 8
@@ -180,6 +187,9 @@ abstract class BaseTaskViewHolder(
             }
         }
         if (displayMode != "minimal") {
+            Log.d("Test", "Я в minimal " + position + "data " + data)
+
+
             notesTextView?.text = data.notes
             data.notes?.let { notes ->
                 scope.launch(Dispatchers.IO) {
@@ -247,8 +257,7 @@ abstract class BaseTaskViewHolder(
 
         val completedCount = data.group?.assignedUsersDetail?.filter { it.completed }?.size ?: 0
         if (completedCount > 0) {
-            completedCountTextView.text =
-                "$completedCount/${data.group?.assignedUsersDetail?.size}"
+            completedCountTextView.text = "$completedCount/${data.group?.assignedUsersDetail?.size}"
             completedCountTextView.visibility = View.VISIBLE
         } else {
             completedCountTextView.visibility = View.GONE

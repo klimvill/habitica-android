@@ -3,10 +3,11 @@ package com.habitrpg.wearos.habitica
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
 import io.kotest.core.config.AbstractProjectConfig
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 
+// я изменил чтобы заработало
 object ProjectConfig : AbstractProjectConfig() {
-    private val testDispatcher = TestCoroutineDispatcher()
+    private val testDispatcher = StandardTestDispatcher()
 
     override suspend fun beforeProject() {
         super.beforeProject()

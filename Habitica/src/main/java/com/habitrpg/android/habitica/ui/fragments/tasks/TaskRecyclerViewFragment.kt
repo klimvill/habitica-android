@@ -563,6 +563,7 @@ open class TaskRecyclerViewFragment :
         setInnerAdapter()
     }
 
+    // todo: Посмотреть почему не используется
     fun setActiveFilter(activeFilter: String) {
         viewModel.setActiveFilter(taskType, activeFilter)
         recyclerAdapter?.filter()
